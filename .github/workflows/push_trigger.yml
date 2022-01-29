@@ -31,7 +31,7 @@ jobs:
            git config user.email "automergebot@mosip.io"
            git fetch --all
            git checkout ${{ github.event.inputs.releaseBranch }}
-	   git pull origin ${{ github.event.inputs.releaseBranch }}
+           git pull origin ${{ github.event.inputs.releaseBranch }}
            git checkout ${{ github.event.inputs.mergeBranch }} 
            git reset --hard origin/${{ github.event.inputs.releaseBranch }}
            git add --all
