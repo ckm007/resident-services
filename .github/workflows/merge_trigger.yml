@@ -1,0 +1,47 @@
+name: Merge release branch to master
+
+on:
+  workflow_dispatch:
+    inputs:
+      message:
+        description: 'Triggered for merging the Release branch to master'     
+        required: false
+        default: 'Release Preparation'
+      releaseBranch:
+        description: 'Branch to merge'
+        required: true
+      mergeBranch:
+        description: 'Branch on which merge to be performed'
+        required: true
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup branch and env
+      run: |
+        # Strip git ref prefix from version
+        echo "BRANCH_NAME=$(echo ${{ github.ref }} | sed -e 's,.*/\(.*\),\1,')" >> $GITHUB_ENV
+        echo "GPG_TTY=$(tty)" >> $GITHUB_ENV
+
+    - name: Merging ${{ github.event.inputs.releaseBranch }} to ${{ github.event.inputs.mergeBranch }}
+      run: |
+           git config user.name "Automerge Bot"
+           git config user.email "automergebot@mosip.io"
+           git fetch --all
+		   git checkout ${{ github.event.inputs.releaseBranch }}
+		   git pull origin ${{ github.event.inputs.releaseBranch }}
+           git checkout ${{ github.event.inputs.mergeBranch }} 
+           git reset --hard origin/${{ github.event.inputs.releaseBranch }}
+		   git add --all
+
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v3
+      with:
+        commit-message: Updating  ${{ github.event.inputs.releaseBranch }} to ${{ github.event.inputs.mergeBranch }}
+        title: Merging Changes
+        body: Automated PR for release preparation. This is to override ${{ github.event.inputs.releaseBranch }} to ${{ github.event.inputs.mergeBranch }}
+        branch: merge-branch
+        delete-branch: true
+        base: ${{ github.event.inputs.mergeBranch }}
