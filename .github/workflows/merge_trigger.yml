@@ -27,14 +27,14 @@ jobs:
 
     - name: Merging ${{ github.event.inputs.releaseBranch }} to ${{ github.event.inputs.mergeBranch }}
       run: |
-           git config user.name "Automerge Bot"
-           git config user.email "automergebot@mosip.io"
-           git fetch --all
-           git checkout ${{ github.event.inputs.releaseBranch }}
-           git pull origin ${{ github.event.inputs.releaseBranch }}
-           git checkout ${{ github.event.inputs.mergeBranch }} 
-           git reset --hard origin/${{ github.event.inputs.releaseBranch }}
-           git add --all
+             git config user.name "Automerge Bot"
+             git config user.email "automergebot@mosip.io"
+             git fetch --all
+             git checkout ${{ github.event.inputs.releaseBranch }}
+             git pull origin ${{ github.event.inputs.releaseBranch }}
+             git checkout ${{ github.event.inputs.mergeBranch }} 
+             git reset --hard origin/${{ github.event.inputs.releaseBranch }}
+             git add --all
 
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v3
